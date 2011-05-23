@@ -9,6 +9,8 @@ from django.test.signals import template_rendered
 from django.utils.translation import ugettext_lazy as _
 from debug_toolbar.panels import DebugPanel
 
+from hdf_emulator import Hdf
+
 def render_decorator(r):
     """
     Decorate a Template's render function, r, to emit the signals
@@ -132,6 +134,10 @@ class TemplateDebugPanel(DebugPanel):
                             # Replace LANGUAGES, which is available in i18n context processor
                             elif key == 'LANGUAGES' and isinstance(value, tuple):
                                 context_layer[key] = '<<languages>>'
+                            elif isinstance(value, Hdf):
+                                # dump the HDF into a human-readable form
+                                context_layer[key] = value.get_value_dict()
+                            
                     try:
                         context_list.append(pformat(context_layer))
                     except UnicodeEncodeError:
