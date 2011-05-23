@@ -109,16 +109,20 @@ class TemplateDebugPanel(DebugPanel):
             # Skip templates that we are generating through the debug toolbar.
             if hasattr(template, 'name') and template.name.startswith('debug_toolbar/'):
                 continue
+            if isinstance(template, basestring):
+                continue
             if hasattr(template, 'origin') and template.origin.name:
                 template.origin_name = template.origin.name
             else:
                 template.origin_name = 'No origin'
+
             info['template'] = template
             # Clean up context for better readability
             if getattr(settings, 'DEBUG_TOOLBAR_CONFIG', {}).get('SHOW_TEMPLATE_CONTEXT', True):
                 context_data = template_data.get('context', None)
 
                 context_list = []
+            
                 for context_layer in context_data.dicts:
                     if hasattr(context_layer, 'items'):
                         for key, value in context_layer.items():
