@@ -81,8 +81,12 @@ class TemplateDebugPanel(DebugPanel):
         return _('Templates')
 
     def title(self):
-        num_templates = len([t for t in self.templates
-            if not (t['template'].name and t['template'].name.startswith('debug_toolbar/'))])
+        num_templates = len([
+            t for t in self.templates
+            if getattr(t['template'], 'name', None) is None or
+               not (t['template'].name and
+                    t['template'].name.startswith('debug_toolbar/'))
+        ])
         return _('Templates (%(num_templates)s rendered)') % {'num_templates': num_templates}
 
     def url(self):
@@ -110,7 +114,15 @@ class TemplateDebugPanel(DebugPanel):
             if hasattr(template, 'origin') and template.origin.name:
                 template.origin_name = template.origin.name
             else:
-                template.origin_name = 'No origin'
+                try:
+                    template.origin_name = 'No origin'
+                except AttributeError, e:
+                    # Mako will sometimes output unicode strings not
+                    # template objects.  Attempting to set an
+                    # attribute on a unicode object will fail, so we
+                    # catch this condition and move along.
+                    pass
+                
             info['template'] = template
             # Clean up context for better readability
             if getattr(settings, 'DEBUG_TOOLBAR_CONFIG', {}).get('SHOW_TEMPLATE_CONTEXT', True):
