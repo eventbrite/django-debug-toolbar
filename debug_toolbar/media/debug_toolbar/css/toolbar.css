@@ -369,19 +369,17 @@
 	position:relative;
 }
 
-#djDebug .djDebugCollapse {
-    display: inline-block;
-    background: #ddd;
-    background: url(data:image/gif;base64,R0lGODlhBgAKAJEDAJGRkdra2qysrP///yH5BAEAAAMALAAAAAAGAAoAAAIPnI+JIRImABBQ0sGc2qoAADs=) 0 3px repeat-x;
-    width: 18px;
-    text-indent: -10000em;
+#djDebug .djDebugCollapsed {
+    display: none;
+    text-decoration: none;
+    color: #333;
 }
-#djDebug .djSelected .djDebugCollapse {
-    background: inherit;
-    text-indent: 0;
-    width: auto;
-    display: inline;
+
+#djDebug .djDebugUncollapsed {
+    color: #333;
+    text-decoration: none;
 }
+
 #djDebug .djUnselected {
     display: none;
 }
@@ -547,8 +545,13 @@
 #djDebug .djSQLDetailsDiv {
     margin-top:0.8em;
 }
-#djDebug .djSQLDetailsDiv pre {
-    color: #777;
+#djDebug pre {
+	white-space: pre-wrap;       /* CSS-3                  */
+	white-space: -moz-pre-wrap;  /* Mozilla, since 1999    */
+	white-space: -pre-wrap;      /* Opera 4-6              */
+	white-space: -o-pre-wrap;    /* Opera 7                */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    color: #555;
     border:1px solid #ccc;
     border-collapse:collapse;
     background-color:#fff;

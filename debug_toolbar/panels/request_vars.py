@@ -1,6 +1,8 @@
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
+
 from debug_toolbar.panels import DebugPanel
+from debug_toolbar.utils import get_name_from_obj
 
 class RequestVarsDebugPanel(DebugPanel):
     """
@@ -8,6 +10,12 @@ class RequestVarsDebugPanel(DebugPanel):
     """
     name = 'RequestVars'
     has_content = True
+
+    def __init__(self, *args, **kwargs):
+        DebugPanel.__init__(self, *args, **kwargs)
+        self.view_func = None
+        self.view_args = None
+        self.view_kwargs = None
 
     def nav_title(self):
         return _('Request Vars')
@@ -29,21 +37,23 @@ class RequestVarsDebugPanel(DebugPanel):
     def content(self):
         context = self.context.copy()
 
-        if hasattr(self.view_func, '__name__'):
-            view_name = self.view_func.__name__
-        elif hasattr(self.view_func, '__class__'):
-            view_name = self.view_func.__class__.__name__
-        else:
-            view_name = '<unknown>'
-
         context.update({
             'get': [(k, self.request.GET.getlist(k)) for k in self.request.GET],
             'post': [(k, self.request.POST.getlist(k)) for k in self.request.POST],
             'cookies': [(k, self.request.COOKIES.get(k)) for k in self.request.COOKIES],
-            'view_func': '%s.%s' % (self.view_func.__module__, view_name),
-            'view_args': self.view_args,
-            'view_kwargs': self.view_kwargs
         })
+        if hasattr(self, 'view_func'):
+            if self.view_func is not None:
+                name = get_name_from_obj(self.view_func)
+            else:
+                name = '<no view>'
+
+            context.update({
+                'view_func': name,
+                'view_args': self.view_args,
+                'view_kwargs': self.view_kwargs
+            })
+
         if hasattr(self.request, 'session'):
             context.update({
                 'session': [(k, self.request.session.get(k)) for k in self.request.session.iterkeys()]

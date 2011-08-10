@@ -183,8 +183,10 @@ class SQLDebugPanel(DebugPanel):
                 query['rgb_color'] = self._databases[alias]['rgb_color']
                 try:
                     query['width_ratio'] = (query['duration'] / self._sql_time) * 100
+                    query['width_ratio_relative'] =  100.0 * query['width_ratio'] / (100.0 - width_ratio_tally)
                 except ZeroDivisionError:
                     query['width_ratio'] = 0
+                    query['width_ratio_relative'] = 0
                 query['start_offset'] = width_ratio_tally
                 query['end_offset'] = query['width_ratio'] + query['start_offset']
                 width_ratio_tally += query['width_ratio']
@@ -192,7 +194,7 @@ class SQLDebugPanel(DebugPanel):
                 stacktrace = []
                 for frame in query['stacktrace']:
                     params = map(escape, frame[0].rsplit('/', 1) + list(frame[1:]))
-                    stacktrace.append('<span class="path">{0}/</span><span class="file">{1}</span> in <span class="func">{3}</span>(<span class="lineno">{2}</span>)\n  <span class="code">{4}</span>'.format(*params))
+                    stacktrace.append(u'<span class="path">{0}/</span><span class="file">{1}</span> in <span class="func">{3}</span>(<span class="lineno">{2}</span>)\n  <span class="code">{4}</span>'.format(*params))
                 query['stacktrace'] = mark_safe('\n'.join(stacktrace))
                 i += 1
 
@@ -221,7 +223,8 @@ class BoldKeywordFilter(sqlparse.filters.Filter):
                 yield sqlparse.tokens.Text, '</strong>'
 
 def swap_fields(sql):
-    return re.sub('SELECT</strong> (.*) <strong>FROM', 'SELECT</strong> <span class="djDebugCollapse">\g<1></span> <strong>FROM', sql)
+    return re.sub('SELECT</strong> (.*) <strong>FROM', 'SELECT</strong> <a class="djDebugUncollapsed djDebugToggle" href="#">&bull;&bull;&bull;</a> ' +
+        '<a class="djDebugCollapsed djDebugToggle" href="#">\g<1></a> <strong>FROM', sql)
 
 def reformat_sql(sql):
     stack = sqlparse.engine.FilterStack()

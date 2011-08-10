@@ -25,6 +25,8 @@ There is also one Django management command currently:
 
 If you have ideas for other panels please let us know.
 
+* Note: The Debug Toolbar only works on Django 1.1 and newer.
+
 Installation
 ============
 
@@ -104,7 +106,7 @@ The debug toolbar has two settings that can be set in `settings.py`:
    * `SHOW_TOOLBAR_CALLBACK`: If not set or set to None, the debug_toolbar
      middleware will use its built-in show_toolbar method for determining whether
      the toolbar should show or not.  The default checks are that DEBUG must be
-     set to True and the IP of the request must be in INTERNAL_IPS.  You can
+     set to True or the IP of the request must be in INTERNAL_IPS.  You can
      provide your own method for displaying the toolbar which contains your
      custom logic.  This method should return True or False.
 
@@ -189,6 +191,13 @@ adding proper coverage (especially if it has a chance for a regression) in the t
 ::
 
     python setup.py test
+
+
+3rd Party Panels
+================
+
+A list of 3rd party panels can be found on the Django Debug Toolbar Github wiki:
+https://github.com/django-debug-toolbar/django-debug-toolbar/wiki/3rd-Party-Panels
 
 TODOs and BUGS
 ==============
