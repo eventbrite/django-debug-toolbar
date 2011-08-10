@@ -78,24 +78,25 @@ class TemplateDebugPanel(DebugPanel):
         context_data = kwargs['context']
 
         context_list = []
-        for context_layer in context_data.dicts:
-            temp_layer = {}
-            if hasattr(context_layer, 'items'):
-                for key, value in context_layer.items():
-                    # Replace any request elements - they have a large
-                    # unicode representation and the request data is
-                    # already made available from the Request Vars panel.
-                    if isinstance(value, http.HttpRequest):
-                        temp_layer[key] = '<<request>>'
-                    # Replace the debugging sql_queries element. The SQL
-                    # data is already made available from the SQL panel.
-                    elif key == 'sql_queries' and isinstance(value, list):
-                        temp_layer[key] = '<<sql_queries>>'
-                    # Replace LANGUAGES, which is available in i18n context processor
-                    elif key == 'LANGUAGES' and isinstance(value, tuple):
-                        temp_layer[key] = '<<languages>>'
-                    else:
-                        temp_layer[key] = value
+        if context_data.dicts:
+            for context_layer in context_data.dicts:
+                temp_layer = {}
+                if hasattr(context_layer, 'items'):
+                    for key, value in context_layer.items():
+                        # Replace any request elements - they have a large
+                        # unicode representation and the request data is
+                        # already made available from the Request Vars panel.
+                        if isinstance(value, http.HttpRequest):
+                            temp_layer[key] = '<<request>>'
+                        # Replace the debugging sql_queries element. The SQL
+                        # data is already made available from the SQL panel.
+                        elif key == 'sql_queries' and isinstance(value, list):
+                            temp_layer[key] = '<<sql_queries>>'
+                        # Replace LANGUAGES, which is available in i18n context processor
+                        elif key == 'LANGUAGES' and isinstance(value, tuple):
+                            temp_layer[key] = '<<languages>>'
+                        else:
+                            temp_layer[key] = value
             try:
                 context_list.append(pformat(temp_layer))
             except UnicodeEncodeError:
