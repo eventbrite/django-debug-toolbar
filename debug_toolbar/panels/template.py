@@ -78,7 +78,7 @@ class TemplateDebugPanel(DebugPanel):
         context_data = kwargs['context']
 
         context_list = []
-        if context_data.dicts:
+        if hasattr(context_data, 'dicts') and context_data.dicts:
             for context_layer in context_data.dicts:
                 temp_layer = {}
                 if hasattr(context_layer, 'items'):
